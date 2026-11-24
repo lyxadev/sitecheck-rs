@@ -51,7 +51,10 @@ pub fn parse(html: &str) -> Page {
         .and_then(|l| l.value().attr("href"))
         .map(|s| s.trim().to_string());
 
-    let viewport = doc.select(&sel(r#"meta[name="viewport"]"#)).next().is_some();
+    let viewport = doc
+        .select(&sel(r#"meta[name="viewport"]"#))
+        .next()
+        .is_some();
 
     let images_without_alt = doc
         .select(&sel("img"))
@@ -79,7 +82,7 @@ pub fn parse(html: &str) -> Page {
 pub fn check_title(title: Option<&str>) -> Vec<Issue> {
     match title {
         None => vec![issue("title-missing", "missing <title>")],
-        Some(t) if t.is_empty() => vec![issue("title-missing", "empty <title>")],
+        Some("") => vec![issue("title-missing", "empty <title>")],
         Some(t) => {
             let len = t.chars().count();
             if (10..=60).contains(&len) {
@@ -115,7 +118,10 @@ pub fn check_h1(count: usize) -> Vec<Issue> {
     match count {
         1 => vec![],
         0 => vec![issue("h1-missing", "no <h1> heading")],
-        n => vec![issue("h1-multiple", &format!("{n} <h1> headings (expected 1)"))],
+        n => vec![issue(
+            "h1-multiple",
+            &format!("{n} <h1> headings (expected 1)"),
+        )],
     }
 }
 
@@ -163,7 +169,10 @@ pub fn check_duplicate_titles(titles: &[(String, Option<String>)]) -> Vec<(Strin
         if dups > 1 {
             out.push((
                 page.clone(),
-                issue("title-duplicate", &format!("title shared with {} pages", dups - 1)),
+                issue(
+                    "title-duplicate",
+                    &format!("title shared with {} pages", dups - 1),
+                ),
             ));
         }
     }
@@ -209,7 +218,10 @@ mod tests {
         let good = "x".repeat(80);
         assert!(check_description(Some(&good)).is_empty());
         assert_eq!(check_description(None)[0].code, "description-missing");
-        assert_eq!(check_description(Some("short"))[0].code, "description-length");
+        assert_eq!(
+            check_description(Some("short"))[0].code,
+            "description-length"
+        );
     }
 
     #[test]

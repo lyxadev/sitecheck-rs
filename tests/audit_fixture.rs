@@ -8,7 +8,11 @@ fn audits_fixture_folder_offline() {
         .args(["audit", fixture, "--json"])
         .output()
         .expect("run sitecheck");
-    assert!(out.status.success(), "stderr: {}", String::from_utf8_lossy(&out.stderr));
+    assert!(
+        out.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
     let json: serde_json::Value = serde_json::from_slice(&out.stdout).expect("valid json");
     let pages = json["pages"].as_array().expect("pages array");
     assert_eq!(pages.len(), 2);

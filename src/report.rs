@@ -8,7 +8,7 @@ pub fn to_json(result: &AuditResult) -> Result<String> {
 
 pub fn print_table(result: &AuditResult) {
     println!("Target: {}", result.target);
-    println!("{:<6}  {:<40}  {}", "SCORE", "PAGE", "ISSUES");
+    println!("{:<6}  {:<40}  ISSUES", "SCORE", "PAGE");
     for page in &result.pages {
         let score = format!("{:>3}", page.score);
         let coloured = if page.score >= 90 {
