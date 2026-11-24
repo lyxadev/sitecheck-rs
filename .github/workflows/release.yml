@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset: sitecheck-linux-x86_64
+            binary: sitecheck
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset: sitecheck-macos-aarch64
+            binary: sitecheck
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset: sitecheck-windows-x86_64
+            binary: sitecheck.exe
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --target ${{ matrix.target }}
+      - name: Package binary
+        shell: bash
+        run: |
+          cp "target/${{ matrix.target }}/release/${{ matrix.binary }}" "${{ matrix.asset }}-${{ matrix.binary }}"
+          if [ "${{ matrix.binary }}" = "sitecheck.exe" ]; then mv "${{ matrix.asset }}-${{ matrix.binary }}" "${{ matrix.asset }}.exe"; else mv "${{ matrix.asset }}-${{ matrix.binary }}" "${{ matrix.asset }}"; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
