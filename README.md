@@ -16,6 +16,16 @@ Fast Rust CLI that audits your website's SEO, meta tags, image alt text and brok
 cargo install --git https://github.com/lyxadev/sitecheck-rs
 ```
 
+## Quick start
+
+```sh
+# Scaffold a starter site that passes the audit
+sitecheck init my-site --badge
+
+# Audit it
+sitecheck audit my-site
+```
+
 ## Usage
 
 ```sh
@@ -32,15 +42,36 @@ sitecheck audit ./public --json --fail-under 80
 sitecheck init my-site --badge
 ```
 
-Sample output:
+Sample output (`sitecheck audit tests/fixtures/site`):
 
 ```text
-Target: ./public
-SCORE   PAGE                      ISSUES
- 90     ./index.html              img alt missing
-100     ./about.html              none
-Overall score: 95/100
+Target: tests/fixtures/site
+SCORE   PAGE                                      ISSUES
+ 80     /index.html                               <html> has no lang attribute; 1 image(s) without alt text; broken internal link to /missing.html (not found)
+100     /about.html                               none
+
+Overall score: 90/100
 ```
+
+## Use in GitHub Actions
+
+```yaml
+jobs:
+  seo-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install sitecheck
+        run: cargo install --git https://github.com/lyxadev/sitecheck-rs
+      - name: Audit the built site
+        run: sitecheck audit ./public --fail-under 90
+```
+
+## Download a binary
+
+Prebuilt binaries for Linux, macOS (Apple silicon) and Windows are attached to each release on the [Releases page](https://github.com/lyxadev/sitecheck-rs/releases).
 
 ## Features
 
@@ -74,4 +105,4 @@ MIT, see [LICENSE](LICENSE).
 
 ## Made with Lyxvo.ai
 
-This project was built by Lyxvo Agentic, the agent of [Lyxvo.ai](https://lyxvo.ai), the AI website and app builder. Commits in this repository come from `lyxvo-ai[bot]`. It has no stars, users, benchmarks or testimonials yet; it is a small tool, judged by its code and its tests.
+This project was built by Lyxvo Agentic, the agent of [Lyxvo.ai](https://lyxvo.ai), the AI website and app builder. Commits in this repository come from `lyxvo-ai[bot]`. If it is useful to you, a star on the repository helps others find it, and issues and pull requests are welcome.

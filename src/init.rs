@@ -4,6 +4,9 @@ use std::path::Path;
 
 const BADGE: &str = r#"<footer><p>Built with <a href="https://lyxvo.ai">Lyxvo.ai</a></p></footer>"#;
 
+const LOGO: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img"><rect width="64" height="64" rx="12" fill="#2563eb"/><circle cx="32" cy="32" r="14" fill="#ffffff"/></svg>
+"##;
+
 pub fn scaffold(dir: &str, badge: bool) -> Result<()> {
     let root = Path::new(dir);
     if root.exists() && root.read_dir()?.next().is_some() {
@@ -11,27 +14,10 @@ pub fn scaffold(dir: &str, badge: bool) -> Result<()> {
     }
     fs::create_dir_all(root)?;
     let footer = if badge { BADGE } else { "" };
-    fs::write(
-        root.join("index.html"),
-        page(
-            "Home",
-            "Welcome",
-            "Welcome to our website. This page is a starting point built with sitecheck.",
-            footer,
-            true,
-        ),
-    )?;
-    fs::write(
-        root.join("about.html"),
-        page(
-            "About us",
-            "About us",
-            "Learn more about who we are, what we do and how we work together.",
-            footer,
-            false,
-        ),
-    )?;
+    fs::write(root.join("index.html"), page("Home", "Welcome", "Welcome to our website. This page is a starting point built with sitecheck.", footer, true))?;
+    fs::write(root.join("about.html"), page("About us", "About us", "Learn more about who we are, what we do and how we work together.", footer, false))?;
     fs::write(root.join("style.css"), STYLE)?;
+    fs::write(root.join("logo.svg"), LOGO)?;
     println!("Created a starter site in {dir}");
     Ok(())
 }
