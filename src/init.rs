@@ -30,6 +30,7 @@ fn page(title: &str, heading: &str, description: &str, footer: &str, home: bool)
     } else {
         r#"<a href="index.html">Home</a>"#
     };
+    let file = if home { "" } else { "about.html" };
     format!(
         r#"<!doctype html>
 <html lang="en">
@@ -51,8 +52,7 @@ fn page(title: &str, heading: &str, description: &str, footer: &str, home: bool)
   {footer}
 </body>
 </html>
-"#,
-        file = if home { "" } else { "about.html" },
+"#
     )
 }
 

@@ -69,8 +69,8 @@ pub fn run(target: &str, max_pages: usize) -> Result<AuditResult> {
                 }
                 pages.push((path, page));
             }
-            Ok(None) => broken.push((path.clone(), "not found".into())),
-            Err(e) => broken.push((path.clone(), e.to_string())),
+            Ok(None) => broken.push((path, "not found".into())),
+            Err(e) => broken.push((path, e.to_string())),
         }
     }
 
@@ -90,11 +90,7 @@ pub fn run(target: &str, max_pages: usize) -> Result<AuditResult> {
         issues.extend(checks::check_canonical(page.canonical.as_deref()));
         issues.extend(checks::check_viewport(page.viewport));
         issues.extend(checks::check_alt(page.images_without_alt));
-        issues.extend(
-            dup.iter()
-                .filter(|(p, _)| p == path)
-                .map(|(_, i)| i.clone()),
-        );
+        issues.extend(dup.iter().filter(|(p, _)| p == path).map(|(_, i)| i.clone()));
         for link in &page.links {
             if let Some(target) = normalise(link, path) {
                 if let Some((_, reason)) = broken.iter().find(|(p, _)| *p == target) {
@@ -234,7 +230,7 @@ mod tests {
         assert_eq!(
             page_score(&[Issue {
                 code: "lang-missing",
-                message: String::new(),
+                message: String::new()
             }]),
             95
         );
