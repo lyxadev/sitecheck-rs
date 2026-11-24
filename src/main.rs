@@ -21,7 +21,7 @@ struct Cli {
 enum Command {
     /// Audit a website URL or a local folder of .html files
     Audit {
-        /// URL (https://...) or path to a local folder
+        /// URL (https://…) or path to a local folder
         target: String,
         /// Maximum number of pages to check
         #[arg(long, default_value_t = 50)]
