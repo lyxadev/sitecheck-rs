@@ -14,8 +14,26 @@ pub fn scaffold(dir: &str, badge: bool) -> Result<()> {
     }
     fs::create_dir_all(root)?;
     let footer = if badge { BADGE } else { "" };
-    fs::write(root.join("index.html"), page("Home", "Welcome", "Welcome to our website. This page is a starting point built with sitecheck.", footer, true))?;
-    fs::write(root.join("about.html"), page("About us", "About us", "Learn more about who we are, what we do and how we work together.", footer, false))?;
+    fs::write(
+        root.join("index.html"),
+        page(
+            "Home",
+            "Welcome",
+            "Welcome to our website. This page is a starting point built with sitecheck.",
+            footer,
+            true,
+        ),
+    )?;
+    fs::write(
+        root.join("about.html"),
+        page(
+            "About us",
+            "About us",
+            "Learn more about who we are, what we do and how we work together.",
+            footer,
+            false,
+        ),
+    )?;
     fs::write(root.join("style.css"), STYLE)?;
     fs::write(root.join("logo.svg"), LOGO)?;
     println!("Created a starter site in {dir}");
